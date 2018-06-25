@@ -203,19 +203,19 @@ def second_task():
 
     xs = np.divide(np.array([1 for i in range(STEPS)]), x)
 
-    plt.plot(xs, y1)
+    plt.plot(xs, y1, 'b')
     plt.xlabel('1 / T')
     plt.ylabel('G_GaCl')
     plt.yscale('log')
     plt.show()
 
-    plt.plot(xs, y2)
+    plt.plot(xs, y2, 'b')
     plt.xlabel('1 / T')
     plt.ylabel('G_GaCl2')
     plt.yscale('log')
     plt.show()
 
-    plt.plot(xs, y3)
+    plt.plot(xs, y3, 'b')
     plt.xlabel('1 / T')
     plt.ylabel('G_GaCl3')
     plt.yscale('log')
@@ -230,7 +230,7 @@ def second_task():
     ax.legend()
     plt.show()
 
-    plt.plot(xs, y4)
+    plt.plot(xs, y4, 'b')
     plt.xlabel('1 / T')
     plt.ylabel('V_Ga')
     plt.yscale('log')
@@ -310,18 +310,19 @@ def third_task():
                 p_g = partial_pressures(al_factors[j], h_factors[i])
                 p_e = dict(zip(vars, solution[j]))
                 G_cl[elem].append(np.fabs(G(elem, p_e, T, P_g=p_g)))
-            ax.plot(al_factors, G_cl[elem], label=elem)
+            clr = "r" if elem == 'AlCl3' else "b"
+            ax.plot(al_factors, G_cl[elem], label=elem, color=clr)
         ax.set_xlabel('x_g')
         ax.legend()
         plt.show()
 
         vs = [np.fabs(V_algan(G_cl['AlCl3'][j], G_cl['GaCl'][j])) for j in range(len(al_factors))]
-        plt.plot(al_factors, vs)
+        plt.plot(al_factors, vs, 'b')
         plt.xlabel('x_g')
         plt.ylabel('V_AlGaN')
         plt.show()
 
-        plt.plot(al_factors, [solution[j][0] for j in range(len(al_factors))])
+        plt.plot(al_factors, [solution[j][0] for j in range(len(al_factors))], 'b')
         plt.xlabel('x_g')
         plt.ylabel('x')
         plt.show()
