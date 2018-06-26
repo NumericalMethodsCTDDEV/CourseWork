@@ -12,7 +12,7 @@ NAMES = ['AlCl', 'AlCl2', 'AlCl3', 'GaCl', 'GaCl2', 'GaCl3', 'NH3', 'H2', 'HCl',
 R = 8.314
 KELVIN = 273
 
-h   = dict(zip(NAMES, [-51032., -259000., -584100., -70553., -241238., -431573., -45940., 0., -92310., 0., 0., 0., -319000., -114000.]))
+h = dict(zip(NAMES, [-51032., -259000., -584100., -70553., -241238., -431573., -45940., 0., -92310., 0., 0., 0., -319000., -114000.]))
 fi1 = dict(zip(NAMES, [318.9948, 427.2137, 511.8114, 332.2718, 443.2976, 526.8113, 231.1183, 205.5368, 243.9878, 242.8156, 172.8289, 125.9597, 123.1132, 160.2647]))
 fi2 = dict(zip(NAMES, [36.94626, 56.56409, 81.15042, 37.11052, 57.745845, 82.03355, 20.52222, 29.50487, 23.15984, 21.47467, 50.51806, 26.03107, 44.98092, 52.86351]))
 fi3 = dict(zip(NAMES, [-0.001226431, -0.002961273, -0.004834879, -0.000746187, -0.002265112, -0.003486473, 0.000716251, 0.000168424, 0.001819985, 0.001748786, -0.00411847, 0.001178297, -0.00734504, -0.00799055]))
@@ -29,9 +29,12 @@ ro = dict(zip(['Al', 'Ga', 'AlN', 'GaN'], [2690, 5900, 3200, 6150]))
 def Hi(T):
     return T / math.pow(10, 4)
 
+
 def Fi_elem(elem, T):
     return fi1[elem] + fi2[elem] * np.log(Hi(T)) + fi3[elem] / math.pow(Hi(T), 2) + fi4[elem] / Hi(T) + \
            fi5[elem] * Hi(T) + fi6[elem] * (Hi(T)**2) + fi7[elem] * (Hi(T)**3)
+
+
 def G_elem(elem, T):
     return h[elem] - Fi_elem(elem, T) * T
 
@@ -54,14 +57,18 @@ def K3(T):
 def Sigma_elemN2(elem):
     return (sigma[elem] + sigma['N2']) / 2
 
+
 def Eps_elemN2(elem):
     return (eps[elem] * eps['N2'])**(1/2)
+
 
 def Mu_elemN2(elem):
     return 2 * mu[elem] * mu['N2'] / (mu[elem] + mu['N2'])
 
+
 def Sigma1_1(x):
     return 1.074 * (x ** (-0.1604))
+
 
 def D_elem(elem, T):
     return 0.02628 * (T**(3/2)) / ((10**5) * Sigma_elemN2(elem) * Sigma1_1(T / Eps_elemN2(elem)) * (Mu_elemN2(elem)**(1/2)))
@@ -70,18 +77,23 @@ def D_elem(elem, T):
 def f0_1(x, T):
     return (x[0]**2) - K1(T) * x[1] * (x[2]**2)
 
+
 def f1_1(x, T):
     return (x[0]**2) - K2(T)  * x[1] * x[3]
+
 
 def f2_1(x, T):
     return (x[0]**6) - K3(T)  * (x[1]**3) * (x[4]**2)
 
+
 def f3_1(x, T):
     return x[0] + 2 * D_elem('H2', T) / D_elem('HCl', T) * x[1] - (10**4)
+
 
 def f4_1(x, T):
     return x[0] + D_elem('AlCl', T) / D_elem('HCl', T) * x[2] + 2 * D_elem('AlCl2', T) / D_elem('HCl', T) * x[3] + \
            3 * D_elem('AlCl3', T) / D_elem('HCl', T) * x[4] - (10**4)
+
 
 def f_1(x, T):
     return np.array([f0_1(x, T), f1_1(x, T), f2_1(x, T), f3_1(x, T), f4_1(x, T)])
@@ -105,8 +117,10 @@ def newton(f, params, eps=1e-12, max_iter=int(1e3), init=[1] * 5):
 def G(elem, P_e, T, P_g=P_g):
     return D_elem(elem, T) * (P_g[elem] - P_e[elem]) / (8314 * T * DELTA)
 
+
 def V_al(P_e, T):
     return (G('AlCl', P_e, T) + G('AlCl2', P_e, T) + G('AlCl3', P_e, T)) * (mu['Al'] / ro['Al']) * (10**9)
+
 
 def V_ga(P_e, T):
     return (G('GaCl', P_e, T) + G('GaCl2', P_e, T) + G('GaCl3', P_e, T)) * (mu['Ga'] / ro['Ga']) * (10**9)
@@ -175,18 +189,23 @@ def K6(T):
 def f0_2(x, T):
     return (x[0]**2) - K4(T) * x[1] * (x[2]**2)
 
+
 def f1_2(x, T):
     return (x[0]**2) - K5(T)  * x[1] * x[3]
+
 
 def f2_2(x, T):
     return (x[0]**6) - K6(T)  * (x[1]**3) * (x[4]**2)
 
+
 def f3_2(x, T):
     return x[0] + 2 * D_elem('H2', T) / D_elem('HCl', T) * x[1] - (10**4)
+
 
 def f4_2(x, T):
     return x[0] + D_elem('GaCl', T) / D_elem('HCl', T) * x[2] + 2 * D_elem('GaCl2', T) / D_elem('HCl', T) * x[3] + \
            3 * D_elem('GaCl3', T) / D_elem('HCl', T) * x[4] - (10**4)
+
 
 def f_2(x, T):
     return np.array([f0_2(x, T), f1_2(x, T), f2_2(x, T), f3_2(x, T), f4_2(x, T)])
@@ -238,7 +257,6 @@ def second_task():
 
 
 def third_task():
-    # ===== Task 3 =====
     STEPS = 20
     T = 1100 + KELVIN
 
@@ -255,8 +273,7 @@ def third_task():
         ])
 
     def V_algan(G_al, G_ga):
-        return (G_al * mu['AlN'] / ro['AlN'] +
-                G_ga * mu['GaN'] / ro['GaN']) * 1e9
+        return (G_al * mu['AlN'] / ro['AlN'] + G_ga * mu['GaN'] / ro['GaN']) * 1e9
 
     # AlCl3 + NH3 = AlN (s) + 3HCl
     def K9(T):
@@ -265,8 +282,7 @@ def third_task():
 
     # GaCl + NH3 = GaN (s) + HCl + H2
     def K10(T):
-        return math.exp((G_elem('GaN', T) + G_elem('HCl', T) + G_elem('H2', T)
-                         - G_elem('GaCl', T) - G_elem('NH3', T)) / R / T)
+        return math.exp((G_elem('GaN', T) + G_elem('HCl', T) + G_elem('H2', T) - G_elem('GaCl', T) - G_elem('NH3', T)) / R / T)
 
     vars = ['x', 'AlCl3', 'GaCl', 'NH3', 'HCl', 'H2']
 
@@ -280,16 +296,10 @@ def third_task():
         return np.array([
             from_var('AlCl3') * from_var('NH3') - K9(T) * from_var('x') * from_var('HCl') ** 3
             , from_var('GaCl') * from_var('NH3') - K10(T) * (1 - from_var('x')) * from_var('HCl') * from_var('H2')
-            , D_elem('HCl', T) * (pp['HCl'] - from_var('HCl')) + 2 * D_elem('H2', T) * (
-                        pp['H2'] - from_var('H2')) + 3 * D_elem('NH3', T) * (pp['NH3'] - from_var('NH3'))
-            , 3 * D_elem('AlCl3', T) * (pp['AlCl3'] - from_var('AlCl3')) + D_elem('GaCl', T) * (
-                        pp['GaCl'] - from_var('GaCl')) + D_elem('HCl', T) * (pp['HCl'] - from_var('HCl'))
-            , D_elem('AlCl3', T) * (pp['AlCl3'] - from_var('AlCl3')) + D_elem('GaCl', T) * (
-                        pp['GaCl'] - from_var('GaCl')) - D_elem('NH3', T) * (pp['NH3'] - from_var('NH3'))
-            ,
-            from_var('x') * D_elem('GaCl', T) * (pp['GaCl'] - from_var('GaCl')) - (1 - from_var('x')) * D_elem('AlCl3',
-                                                                                                               T) * (
-                        pp['AlCl3'] - from_var('AlCl3'))
+            , D_elem('HCl', T) * (pp['HCl'] - from_var('HCl')) + 2 * D_elem('H2', T) * (pp['H2'] - from_var('H2')) + 3 * D_elem('NH3', T) * (pp['NH3'] - from_var('NH3'))
+            , 3 * D_elem('AlCl3', T) * (pp['AlCl3'] - from_var('AlCl3')) + D_elem('GaCl', T) * (pp['GaCl'] - from_var('GaCl')) + D_elem('HCl', T) * (pp['HCl'] - from_var('HCl'))
+            , D_elem('AlCl3', T) * (pp['AlCl3'] - from_var('AlCl3')) + D_elem('GaCl', T) * (pp['GaCl'] - from_var('GaCl')) - D_elem('NH3', T) * (pp['NH3'] - from_var('NH3'))
+            , from_var('x') * D_elem('GaCl', T) * (pp['GaCl'] - from_var('GaCl')) - (1 - from_var('x')) * D_elem('AlCl3',T) * (pp['AlCl3'] - from_var('AlCl3'))
         ])
 
     al_factors = np.linspace(0, 1, STEPS)
@@ -329,5 +339,5 @@ def third_task():
 
 
 first_task()
-# second_task()
-# third_task()
+second_task()
+third_task()
