@@ -112,7 +112,7 @@ def newton(f, params, eps=1e-12, max_iter=int(1e3), init=[1] * 5):
     return x
 
 
-def G(elem, P_e, T):
+def G(elem, P_e, T, P_g=P_g):
     return D_i(elem, T) * (P_g[elem] - P_e[elem]) / (8314 * T * DELTA)
 
 
